@@ -1,4 +1,8 @@
+import 'package:calculator_flutter/calc_button.dart';
+import 'package:calculator_flutter/custom_colors.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:math_expressions/math_expressions.dart';
 
 void main() {
   runApp(MyApp());
@@ -9,105 +13,195 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Flutter Calculator',
       theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
         primarySwatch: Colors.blue,
       ),
-      home: MyHomePage(title: 'Flutter Demo Home Page'),
+      home: MainPage(),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
-  final String title;
-
+class MainPage extends StatefulWidget {
   @override
-  _MyHomePageState createState() => _MyHomePageState();
+  _MainPageState createState() => _MainPageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+class _MainPageState extends State<MainPage> {
 
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
-  }
+  var input = '';
+  var answer = '';
 
-  @override
+  // Array of button
+  final List<String> buttonSymbols = [
+    'AC',
+    '+/-',
+    '%',
+    ' / ',
+    '7',
+    '8',
+    '9',
+    ' x ',
+    '4',
+    '5',
+    '6',
+    ' - ',
+    '1',
+    '2',
+    '3',
+    ' + ',
+    'DEL',
+    '0',
+    '.',
+    '=',
+  ];
+
+@override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
-    return Scaffold(
-      appBar: AppBar(
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: SystemUiOverlayStyle.light.copyWith(
+        statusBarColor: CustomColors.richBlack
       ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Invoke "debug painting" (press "p" in the console, choose the
-          // "Toggle Debug Paint" action from the Flutter Inspector in Android
-          // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
-          // to see the wireframe for each widget.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headline4,
-            ),
-          ],
+      child: SafeArea(
+        child: Scaffold(
+          backgroundColor: CustomColors.richBlack,
+          body: Column(
+            children: <Widget>[
+              Expanded(
+                child: Container(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Container(
+                          alignment: Alignment.bottomRight,
+                          child: Text(
+                            input,
+                            style: TextStyle(fontSize: 34, color: Colors.white, fontWeight: FontWeight.w400),
+                          ),
+                        ),
+                        Container(
+                          alignment: Alignment.topRight,
+                          child: Text(
+                            answer,
+                            style: TextStyle(
+                              fontSize: 50,
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold
+                            ),
+                          ),
+                        )
+                      ]
+                    ),
+                  ),
+                ),
+              ),
+              Expanded(
+                flex: 2,
+                child: Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20),
+                    color: CustomColors.offBlack,
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 16.0, right: 16.0, top: 36),
+                    child: GridView.builder(
+                    itemCount: 20,
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 4),
+                    itemBuilder: (context, index) {
+                        switch(index) {
+                          // Clear
+                          case 0:
+                          return CalcButton(
+                            buttonText: buttonSymbols[index], textColor: CustomColors.tiffany, textSize: 20,
+                            buttonPressed: () {
+                              setState(() {
+                                input = '';
+                                answer = '0';
+                              });
+                            },
+                            buttonColor: CustomColors.buttonColor,);
+                          // positive / negative
+                          case 1:
+                          return CalcButton(
+                            buttonText: buttonSymbols[index], textColor: CustomColors.tiffany, textSize: 24,
+                            buttonPressed: () {
+                              
+                            }, 
+                            buttonColor: CustomColors.buttonColor,);
+                          // percent
+                          case 2:
+                          return CalcButton(
+                            buttonText: buttonSymbols[index], textColor: CustomColors.tiffany, textSize: 28, 
+                            buttonPressed: () {
+                              setState(() {
+                                input += buttonSymbols[index];
+                              });
+                            }, 
+                            buttonColor: CustomColors.buttonColor,);
+                          // delete
+                          case 16:
+                          return CalcButton(
+                            buttonText: buttonSymbols[index], textColor: Colors.white, textSize: 20, 
+                            buttonPressed: () {
+                              setState(() {
+                                input = input.substring(0, input.length - 1);
+                              });
+                            }, 
+                            buttonColor: CustomColors.buttonColor,);
+                          // equal
+                          case 19:
+                          return CalcButton(
+                            buttonText: buttonSymbols[index], textColor: CustomColors.amaranth, textSize: 36.0, 
+                            buttonPressed: () {
+                              setState(() {
+                                calculateInput();
+                              });
+                            }, 
+                            buttonColor: CustomColors.buttonColor,);
+                          default:
+                          return CalcButton(
+                            buttonText: buttonSymbols[index], 
+                            textColor: _isOperator(buttonSymbols[index]) ? CustomColors.amaranth : Colors.white, 
+                            textSize: 24, 
+                            buttonPressed: () {
+                              setState(() {
+                                input += buttonSymbols[index];
+                              });
+                            }, 
+                            buttonColor: CustomColors.buttonColor,
+                          );
+                        }
+                      }
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
     );
+  }
+
+  bool _isOperator(String buttonText) {
+    if (buttonText == ' / ' || buttonText == ' x ' || buttonText == ' - ' || buttonText == ' + ' || buttonText == '=') {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  void calculateInput() {
+    String finaluserinput = input;
+    finaluserinput = input.replaceAll('x', '*');
+  
+    Parser p = Parser();
+    Expression exp = p.parse(finaluserinput);
+    ContextModel cm = ContextModel();
+    double eval = exp.evaluate(EvaluationType.REAL, cm);
+    answer = eval.toString();
   }
 }
