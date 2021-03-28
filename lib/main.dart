@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:calculator_flutter/calc_button.dart';
 import 'package:calculator_flutter/custom_colors.dart';
 import 'package:flutter/material.dart';
@@ -37,19 +39,19 @@ class _MainPageState extends State<MainPage> {
     'AC',
     '+/-',
     '%',
-    ' / ',
+    '/',
     '7',
     '8',
     '9',
-    ' x ',
+    'x',
     '4',
     '5',
     '6',
-    ' - ',
+    '-',
     '1',
     '2',
     '3',
-    ' + ',
+    '+',
     'DEL',
     '0',
     '.',
@@ -118,8 +120,8 @@ class _MainPageState extends State<MainPage> {
                             buttonText: buttonSymbols[index], textColor: CustomColors.tiffany, textSize: 20,
                             buttonPressed: () {
                               setState(() {
-                                input = '';
-                                answer = '0';
+                                  input = '';
+                                  answer = '';
                               });
                             },
                             buttonColor: CustomColors.buttonColor,);
@@ -147,7 +149,9 @@ class _MainPageState extends State<MainPage> {
                             buttonText: buttonSymbols[index], textColor: Colors.white, textSize: 20, 
                             buttonPressed: () {
                               setState(() {
-                                input = input.substring(0, input.length - 1);
+                                if (input.isNotEmpty) {
+                                  input = input.substring(0, input.length - 1);
+                                }
                               });
                             }, 
                             buttonColor: CustomColors.buttonColor,);
@@ -156,9 +160,11 @@ class _MainPageState extends State<MainPage> {
                           return CalcButton(
                             buttonText: buttonSymbols[index], textColor: CustomColors.amaranth, textSize: 36.0, 
                             buttonPressed: () {
-                              setState(() {
-                                calculateInput();
-                              });
+                              if (input.isNotEmpty) {
+                                setState(() {
+                                  calculateInput();
+                                });
+                              }
                             }, 
                             buttonColor: CustomColors.buttonColor,);
                           default:
@@ -187,21 +193,41 @@ class _MainPageState extends State<MainPage> {
   }
 
   bool _isOperator(String buttonText) {
-    if (buttonText == ' / ' || buttonText == ' x ' || buttonText == ' - ' || buttonText == ' + ' || buttonText == '=') {
+    if (buttonText == '/' || buttonText == 'x' || buttonText == '-' || buttonText == '+' || buttonText == '=') {
       return true;
     } else {
       return false;
     }
   }
 
+  bool isInteger(num value) => 
+    value is int || value == value.roundToDouble();
+
   void calculateInput() {
     String finaluserinput = input;
     finaluserinput = input.replaceAll('x', '*');
-  
+
+    bool blankExp = false;
     Parser p = Parser();
-    Expression exp = p.parse(finaluserinput);
+    Expression exp;
+    try {
+      exp = p.parse(finaluserinput);
+    } on Error catch(e) {
+      print(e.stackTrace);
+      blankExp = true;
+      answer = 'ERROR';
+    }
     ContextModel cm = ContextModel();
-    double eval = exp.evaluate(EvaluationType.REAL, cm);
-    answer = eval.toString();
+    double eval;
+    if (!blankExp) {
+      eval = exp.evaluate(EvaluationType.REAL, cm);
+
+      if (isInteger(eval)) {
+      answer = eval.toInt().toString();
+    } else {
+      answer = eval.toString();
+    }
+    }
+    
   }
 }
