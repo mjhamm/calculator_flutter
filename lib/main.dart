@@ -93,7 +93,7 @@ class _MainPageState extends State<MainPage> {
                           },
                           child: Container(
                             color: _isDarkModeOn ? CustomColors.bottomDark : CustomColors.bottomLight,
-                            child: Icon(Icons.wb_sunny, color: _isDarkModeOn ? Colors.grey[700] : Colors.white,),
+                            child: Icon(Icons.wb_sunny, color: _isDarkModeOn ? Colors.grey[700] : Colors.black,),
                           ),
                         ),
                       ),
@@ -117,7 +117,7 @@ class _MainPageState extends State<MainPage> {
               Expanded(
                 child: Container(
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    padding: const EdgeInsets.symmetric(horizontal: 24.0),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
