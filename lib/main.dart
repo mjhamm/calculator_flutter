@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:calculator_flutter/calc_button.dart';
 import 'package:calculator_flutter/custom_colors.dart';
 import 'package:flutter/cupertino.dart';
@@ -64,12 +62,14 @@ class _MainPageState extends State<MainPage> {
 @override
   Widget build(BuildContext context) {
     return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: SystemUiOverlayStyle.light.copyWith(
-        statusBarColor: CustomColors.richBlack
+      value: _isDarkModeOn ? SystemUiOverlayStyle.light.copyWith(
+        statusBarColor: _isDarkModeOn ? CustomColors.mainDark : CustomColors.mainLight
+      ) : SystemUiOverlayStyle.dark.copyWith(
+        statusBarColor: _isDarkModeOn ? CustomColors.mainDark : CustomColors.mainLight
       ),
       child: SafeArea(
         child: Scaffold(
-          backgroundColor: CustomColors.richBlack,
+          backgroundColor: _isDarkModeOn ? CustomColors.mainDark : CustomColors.mainLight,
           body: Column(
             children: <Widget>[
               Padding(
@@ -79,7 +79,7 @@ class _MainPageState extends State<MainPage> {
                   width: MediaQuery.of(context).size.width / 4,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(20),
-                    color: CustomColors.offBlack
+                    color: _isDarkModeOn ? CustomColors.bottomDark : CustomColors.bottomLight
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -92,7 +92,7 @@ class _MainPageState extends State<MainPage> {
                             });
                           },
                           child: Container(
-                            color: CustomColors.offBlack,
+                            color: _isDarkModeOn ? CustomColors.bottomDark : CustomColors.bottomLight,
                             child: Icon(Icons.wb_sunny, color: _isDarkModeOn ? Colors.grey[700] : Colors.white,),
                           ),
                         ),
@@ -105,7 +105,7 @@ class _MainPageState extends State<MainPage> {
                             });
                           },
                           child: Container(
-                            color: CustomColors.offBlack,
+                            color: _isDarkModeOn ? CustomColors.bottomDark : CustomColors.bottomLight,
                             child: Icon(CupertinoIcons.moon, color: _isDarkModeOn ? Colors.white : Colors.grey[700],),
                           ),
                         ),
@@ -125,9 +125,7 @@ class _MainPageState extends State<MainPage> {
                           alignment: Alignment.bottomRight,
                           child: Text(
                             input,
-                            maxLines: 1,
-                            softWrap: false,
-                            style: TextStyle(fontSize: 34, color: Colors.white, fontWeight: FontWeight.w400),
+                            style: TextStyle(fontSize: 34, color: _isDarkModeOn ? Colors.white : Colors.black, fontWeight: FontWeight.w400),
                           ),
                         ),
                         Container(
@@ -136,7 +134,7 @@ class _MainPageState extends State<MainPage> {
                             answer,
                             style: TextStyle(
                               fontSize: 50,
-                              color: Colors.white,
+                              color: _isDarkModeOn ? Colors.white : Colors.black,
                               fontWeight: FontWeight.bold
                             ),
                           ),
@@ -150,8 +148,8 @@ class _MainPageState extends State<MainPage> {
                 flex: 3,
                 child: Container(
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(20),
-                    color: CustomColors.offBlack,
+                    borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
+                    color: _isDarkModeOn ? CustomColors.bottomDark : CustomColors.bottomLight,
                   ),
                   child: Padding(
                     padding: const EdgeInsets.only(left: 16.0, right: 16.0, top: 36),
@@ -171,7 +169,7 @@ class _MainPageState extends State<MainPage> {
                                   answer = '';
                               });
                             },
-                            buttonColor: CustomColors.buttonColor,);
+                            buttonColor: _isDarkModeOn ? CustomColors.buttonColorDark : CustomColors.buttonColorLight,);
                           // positive / negative
                           case 1:
                           return CalcButton(
@@ -179,7 +177,7 @@ class _MainPageState extends State<MainPage> {
                             buttonPressed: () {
                               
                             }, 
-                            buttonColor: CustomColors.buttonColor,);
+                            buttonColor: _isDarkModeOn ? CustomColors.buttonColorDark : CustomColors.buttonColorLight,);
                           // percent
                           case 2:
                           return CalcButton(
@@ -189,11 +187,11 @@ class _MainPageState extends State<MainPage> {
                                 input += buttonSymbols[index];
                               });
                             }, 
-                            buttonColor: CustomColors.buttonColor,);
+                            buttonColor: _isDarkModeOn ? CustomColors.buttonColorDark : CustomColors.buttonColorLight,);
                           // delete
                           case 16:
                           return CalcButton(
-                            buttonText: buttonSymbols[index], textColor: Colors.white, textSize: 20, 
+                            buttonText: buttonSymbols[index], textColor: _isDarkModeOn ? Colors.white : Colors.black, textSize: 20, 
                             buttonPressed: () {
                               setState(() {
                                 if (input.isNotEmpty) {
@@ -201,7 +199,7 @@ class _MainPageState extends State<MainPage> {
                                 }
                               });
                             }, 
-                            buttonColor: CustomColors.buttonColor,);
+                            buttonColor: _isDarkModeOn ? CustomColors.buttonColorDark : CustomColors.buttonColorLight,);
                           // equal
                           case 19:
                           return CalcButton(
@@ -213,18 +211,18 @@ class _MainPageState extends State<MainPage> {
                                 });
                               }
                             }, 
-                            buttonColor: CustomColors.buttonColor,);
+                            buttonColor: _isDarkModeOn ? CustomColors.buttonColorDark : CustomColors.buttonColorLight,);
                           default:
                           return CalcButton(
                             buttonText: buttonSymbols[index], 
-                            textColor: _isOperator(buttonSymbols[index]) ? CustomColors.amaranth : Colors.white, 
+                            textColor: _isOperator(buttonSymbols[index]) ? CustomColors.amaranth : (_isDarkModeOn ? Colors.white : Colors.black), 
                             textSize: 24, 
                             buttonPressed: () {
                               setState(() {
                                 input += buttonSymbols[index];
                               });
                             }, 
-                            buttonColor: CustomColors.buttonColor,
+                            buttonColor: _isDarkModeOn ? CustomColors.buttonColorDark : CustomColors.buttonColorLight,
                           );
                         }
                       }

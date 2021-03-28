@@ -1,4 +1,3 @@
-import 'package:calculator_flutter/custom_colors.dart';
 import 'package:flutter/material.dart';
 
 class CalcButton extends StatelessWidget {
@@ -42,7 +41,7 @@ class CalcButton extends StatelessWidget {
                 style: TextStyle(
                   color: textColor,
                   fontSize: textSize,
-                  fontWeight: FontWeight.w400
+                  fontWeight: FontWeight.w600
                 ),
               ),
             ),
