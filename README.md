@@ -1,3 +1,3 @@
-# calculator_flutter
+# Flutter Calculator
 
 Calculator built with Dart and Flutter
