@@ -2,6 +2,7 @@ import 'dart:ffi';
 
 import 'package:calculator_flutter/calc_button.dart';
 import 'package:calculator_flutter/custom_colors.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:math_expressions/math_expressions.dart';
@@ -33,6 +34,8 @@ class _MainPageState extends State<MainPage> {
 
   var input = '';
   var answer = '';
+
+  bool _isDarkModeOn = false;
 
   // Array of button
   final List<String> buttonSymbols = [
@@ -69,6 +72,48 @@ class _MainPageState extends State<MainPage> {
           backgroundColor: CustomColors.richBlack,
           body: Column(
             children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.only(top: 12.0),
+                child: Container(
+                  height: 60,
+                  width: MediaQuery.of(context).size.width / 4,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20),
+                    color: CustomColors.offBlack
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      Expanded(
+                        child: GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              _isDarkModeOn = false;
+                            });
+                          },
+                          child: Container(
+                            color: CustomColors.offBlack,
+                            child: Icon(Icons.wb_sunny, color: _isDarkModeOn ? Colors.grey[700] : Colors.white,),
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        child: GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              _isDarkModeOn = true;
+                            });
+                          },
+                          child: Container(
+                            color: CustomColors.offBlack,
+                            child: Icon(CupertinoIcons.moon, color: _isDarkModeOn ? Colors.white : Colors.grey[700],),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
               Expanded(
                 child: Container(
                   child: Padding(
@@ -80,6 +125,8 @@ class _MainPageState extends State<MainPage> {
                           alignment: Alignment.bottomRight,
                           child: Text(
                             input,
+                            maxLines: 1,
+                            softWrap: false,
                             style: TextStyle(fontSize: 34, color: Colors.white, fontWeight: FontWeight.w400),
                           ),
                         ),
@@ -100,7 +147,7 @@ class _MainPageState extends State<MainPage> {
                 ),
               ),
               Expanded(
-                flex: 2,
+                flex: 3,
                 child: Container(
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(20),
